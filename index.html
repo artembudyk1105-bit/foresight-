@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f4f4f4">
+<title>Foresight</title>
+<style>
+:root{--bg:#f4f4f4;--card:#fff;--ink:#141414;--mut:#6b6b6b;--line:#e4e4e4;--acc:#141414;--accbg:#e6e6e6;--chip:#ececec;--live:#e4e4e4;--livet:#141414;--rec:#d93025;--sh:0 2px 10px rgba(0,0,0,.08);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121212;--card:#1c1c1c;--ink:#ededed;--mut:#9a9a9a;--line:#2c2c2c;--acc:#ededed;--accbg:#2c2c2c;--chip:#262626;--live:#2c2c2c;--livet:#ededed;--sh:0 2px 10px rgba(0,0,0,.4);color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#121212;--card:#1c1c1c;--ink:#ededed;--mut:#9a9a9a;--line:#2c2c2c;--acc:#ededed;--accbg:#2c2c2c;--chip:#262626;--live:#2c2c2c;--livet:#ededed;--sh:0 2px 10px rgba(0,0,0,.4);color-scheme:dark}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.45 "Google Sans",Roboto,system-ui,-apple-system,sans-serif;background-color:var(--bg)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:10}
+#app{height:100%;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px);max-width:640px;margin:0 auto}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.top{display:flex;align-items:center;gap:8px;padding:10px 14px 4px}
+.logo{width:26px;height:26px;border-radius:50%;background:conic-gradient(#e2e2e2,#9a9a9a,#f3f3f3,#b5b5b5,#e2e2e2);flex:none}
+.top h1{font-size:17px;font-weight:500;margin:0;white-space:nowrap}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:4px 14px 8px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{background:var(--chip);border:1px solid var(--line);border-radius:8px;padding:3px 9px;font-size:12px;color:var(--mut);white-space:nowrap}
+.rec{margin:0 14px 8px;background:var(--card);box-shadow:var(--sh);border-radius:22px;display:flex;align-items:center;gap:10px;padding:8px 14px;color:var(--acc)}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--rec);flex:none;opacity:.35}
+.rec.on .dot{opacity:1}
+#time{font-weight:500;font-variant-numeric:tabular-nums}
+#wave{flex:1;display:flex;align-items:center;justify-content:space-between;height:26px;min-width:0}
+#wave i{display:block;width:3px;border-radius:2px;background:currentColor;height:4px;transition:height .12s}
+main{flex:1;overflow-y:auto;padding:0 14px 12px;min-height:0}
+section{display:none}
+section.on{display:block}
+.head{display:flex;align-items:center;gap:10px;margin:6px 0 10px}
+.rb{width:40px;height:40px;border-radius:50%;background:var(--chip);display:grid;place-items:center;border:1px solid var(--line)}
+.head h2{font-size:19px;font-weight:500;margin:0;line-height:1.2}
+.meta{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 12px}
+.tabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;margin-bottom:10px}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:7px 14px;border-radius:18px;color:var(--mut);white-space:nowrap}
+.tab.on{background:var(--acc);color:var(--card);font-weight:500}
+.card{background:var(--card);border-radius:22px;padding:12px;min-height:46vh;display:flex;flex-direction:column}
+.tool{display:flex;align-items:center;gap:2px;margin-bottom:10px;flex-wrap:wrap}
+.tool button{width:34px;height:34px;border-radius:8px;display:grid;place-items:center}
+.tool .sp{flex:1}
+.pill{background:var(--chip);border-radius:16px;padding:6px 12px;font-size:13px;color:var(--mut);width:auto!important}
+.pill.live{background:var(--acc);color:var(--card)}
+.seg{display:flex;background:var(--chip);border-radius:14px;padding:3px;margin-bottom:10px}
+.seg button{flex:1;padding:7px 4px;border-radius:11px;font-size:13px;color:var(--mut)}
+.seg button.on{background:var(--card);color:var(--ink);font-weight:500;box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.lab{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:var(--mut);margin-bottom:6px}
+.badge{background:var(--live);color:var(--livet);border-radius:10px;padding:1px 8px;font-size:11px;font-weight:500}
+textarea,input{font:inherit;color:inherit;border:0;outline:0;background:none;width:100%;resize:none}
+textarea{flex:1;min-height:30vh}
+.empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;color:var(--mut);padding:20px;font-size:13px}
+.empty svg{width:34px;height:34px;opacity:.6}
+.msg{display:flex;gap:10px;padding:6px 0}
+.av{width:34px;height:34px;border-radius:50%;background:#8a8a8a;color:#fff;display:grid;place-items:center;font-size:12px;font-weight:600;flex:none}
+.msg b{font-weight:600}.msg small{color:var(--mut);margin-left:6px}
+.inp{display:flex;gap:8px;align-items:center;background:var(--chip);border-radius:24px;padding:6px 6px 6px 16px;margin-top:auto}
+.inp button{width:38px;height:38px;border-radius:50%;background:var(--acc);color:var(--card);display:grid;place-items:center}
+.row{display:flex;align-items:center;gap:12px;background:var(--card);border-radius:16px;padding:12px 14px;margin-bottom:8px}
+.row span{flex:1}
+.stat{background:var(--card);border-radius:20px;padding:16px;margin-bottom:10px}
+.stat strong{display:block;font-size:30px;font-weight:500;color:var(--acc)}
+.big{font-size:21px;font-weight:500;margin:8px 0 12px}
+nav{display:flex;background:var(--card);border-top:1px solid var(--line);padding:6px 4px calc(6px + env(safe-area-inset-bottom,0px))}
+nav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;color:var(--mut);padding:4px 0}
+nav button span{padding:3px 16px;border-radius:14px;display:block;line-height:0}
+nav button.on{color:var(--ink);font-weight:500}
+nav button.on span{background:var(--accbg);color:var(--acc)}
+.lang{display:flex;gap:8px}
+.lang button{padding:7px 16px;border-radius:16px;background:var(--chip)}
+.lang button.on{background:var(--acc);color:var(--card);font-weight:500}
+[hidden]{display:none!important}
+button:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="i-doc" viewBox="0 0 24 24"><path d="M6 3h12v18H6zM9 8h6M9 12h6M9 16h4"/></symbol>
+<symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></symbol>
+<symbol id="i-src" viewBox="0 0 24 24"><path d="M3 6h7l2 2h9v11H3zM3 11h18"/></symbol>
+<symbol id="i-cup" viewBox="0 0 24 24"><path d="M8 4h8v6a4 4 0 0 1-8 0zM8 6H4v2a3 3 0 0 0 4 3M16 6h4v2a3 3 0 0 1-4 3M12 14v4M8 20h8"/></symbol>
+<symbol id="i-set" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></symbol>
+<symbol id="i-back" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
+<symbol id="i-cal" viewBox="0 0 24 24"><path d="M4 6h16v14H4zM4 10h16M8 3v4M16 3v4"/></symbol>
+<symbol id="i-pause" viewBox="0 0 24 24"><path d="M9 5v14M15 5v14"/></symbol>
+<symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5l11 7-11 7z"/></symbol>
+<symbol id="i-ul" viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/></symbol>
+<symbol id="i-ol" viewBox="0 0 24 24"><path d="M10 6h10M10 12h10M10 18h10M4 5l1-1v4M4 14h2l-2 3h2"/></symbol>
+<symbol id="i-copy" viewBox="0 0 24 24"><path d="M8 8h11v12H8zM5 16V4h11"/></symbol>
+<symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2zM19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></symbol>
+<symbol id="i-send" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+</defs></svg>
+
+<div id="app">
+  <div class="top"><div class="logo"></div><h1>Foresight</h1></div>
+  <div class="chips"><span class="chip" data-i="powered"></span><span class="chip"><b>4.91M</b> <span data-i="tokens"></span></span></div>
+  <div class="rec" id="rec">
+    <span class="dot"></span><span id="time">00:00</span><div id="wave"></div>
+    <button id="pp" aria-label="Record"><svg><use href="#i-play"/></svg></button>
+  </div>
+
+  <main>
+    <section id="s-meet" class="on">
+      <div class="head">
+        <button class="rb" aria-label="Back"><svg><use href="#i-back"/></svg></button>
+        <button class="rb" aria-label="Calendar"><svg><use href="#i-cal"/></svg></button>
+      </div>
+      <h2 class="big" data-i="mtitle"></h2>
+      <div class="meta"><span class="chip" data-i="mdate"></span><span class="chip">3:50 PM – 4:20 PM</span><span class="chip">Zoom</span></div>
+      <div class="tabs" id="tabs">
+        <button class="tab on" data-t="notes" data-i="notes"></button>
+        <button class="tab" data-t="chat" data-i="chat"></button>
+        <button class="tab" data-t="summary" data-i="summary"></button>
+        <button class="tab" data-t="tr" data-i="tr"></button>
+        <button class="tab" data-t="qa" data-i="qa"></button>
+      </div>
+
+      <div class="card" id="p-notes">
+        <div class="seg" id="seg"><button class="on" data-p="short" data-i="short"></button><button data-p="enh" data-i="enh"></button></div>
+        <div class="tool">
+          <button aria-label="Bold"><b>B</b></button><button aria-label="Italic"><i>I</i></button>
+          <button aria-label="List"><svg><use href="#i-ul"/></svg></button><button aria-label="Numbered"><svg><use href="#i-ol"/></svg></button>
+          <button aria-label="Text">T</button><span class="sp"></span>
+          <button class="pill" data-i="std"></button><button class="pill live" data-i="liveenh"></button>
+        </div>
+        <div id="pane-short" style="display:flex;flex-direction:column;flex:1">
+          <div class="lab"><span data-i="short"></span><span class="badge">Live</span></div>
+          <textarea id="note" data-ph="ph"></textarea>
+        </div>
+        <div id="pane-enh" class="empty" style="display:none"><svg><use href="#i-spark"/></svg><span data-i="emptyenh"></span></div>
+      </div>
+
+      <div class="card" id="p-chat" hidden><div class="empty"><svg><use href="#i-chat"/></svg><span data-i="chatempty"></span></div>
+        <div class="inp"><input data-ph="askph"><button aria-label="Send"><svg><use href="#i-send"/></svg></button></div></div>
+      <div class="card" id="p-summary" hidden><div class="empty"><svg><use href="#i-doc"/></svg><span data-i="sumempty"></span></div></div>
+      <div class="card" id="p-tr" hidden>
+        <div class="tool"><span class="sp"></span><button id="am" aria-label="Smaller">A−</button><button id="ap" aria-label="Larger">A+</button></div>
+        <div id="trbox"><div class="msg"><div class="av">DB</div><div><b>Daniel Brooks</b><small>00:03</small><div data-i="trsample"></div></div></div></div>
+      </div>
+      <div class="card" id="p-qa" hidden><div class="empty"><svg><use href="#i-spark"/></svg><span data-i="qaempty"></span></div></div>
+    </section>
+
+    <section id="s-ask"><h2 class="big" data-i="ask"></h2>
+      <div class="card"><div class="empty"><svg><use href="#i-chat"/></svg><span data-i="askempty"></span></div>
+      <div class="inp"><input data-ph="askph"><button aria-label="Send"><svg><use href="#i-send"/></svg></button></div></div></section>
+
+    <section id="s-src"><h2 class="big" data-i="sources"></h2>
+      <div class="row"><svg><use href="#i-doc"/></svg><span data-i="srcfiles"></span></div>
+      <div class="row"><svg><use href="#i-src"/></svg><span data-i="srcdocs"></span></div>
+      <button class="row" style="width:100%;color:var(--acc)"><svg><use href="#i-plus"/></svg><span data-i="srcadd" style="text-align:left"></span></button></section>
+
+    <section id="s-stats"><h2 class="big" data-i="stats"></h2>
+      <div class="stat"><strong>4.91M</strong><span data-i="tokens"></span></div>
+      <div class="stat"><strong>0</strong><span data-i="statm"></span></div></section>
+
+    <section id="s-set"><h2 class="big" data-i="settings"></h2>
+      <div class="row"><span data-i="langl"></span><div class="lang" id="lang"><button data-l="en">English</button><button data-l="ru">Русский</button></div></div>
+      <div class="row"><span data-i="themel"></span><div class="lang" id="theme"><button data-th="auto">Auto</button><button data-th="light">Light</button><button data-th="dark">Dark</button></div></div></section>
+  </main>
+
+  <nav id="nav">
+    <button class="on" data-s="meet"><span><svg><use href="#i-doc"/></svg></span><i data-i="meetings" style="font-style:normal"></i></button>
+    <button data-s="ask"><span><svg><use href="#i-chat"/></svg></span><i data-i="ask" style="font-style:normal"></i></button>
+    <button data-s="src"><span><svg><use href="#i-src"/></svg></span><i data-i="sources" style="font-style:normal"></i></button>
+    <button data-s="stats"><span><svg><use href="#i-cup"/></svg></span><i data-i="stats" style="font-style:normal"></i></button>
+    <button data-s="set"><span><svg><use href="#i-set"/></svg></span><i data-i="settings" style="font-style:normal"></i></button>
+  </nav>
+</div>
+
+<script>
+const T={
+en:{meetings:"Meetings",ask:"Ask",sources:"Sources",stats:"Stats",settings:"Settings",powered:"Powered by EmbeddingGemma 2",tokens:"Tokens saved",mtitle:"EmbeddingGemma 2 Launch with Foresight",mdate:"Fri, Oct 2, 2026",notes:"Notes",chat:"Chat",summary:"Summary",tr:"Transcript",qa:"Live Q&A",short:"Shorthand notes",enh:"Live enhanced notes",std:"Standard",liveenh:"Live Enhance",ph:"Jot quick points here…",emptyenh:"Live enhanced notes will appear here as shorthand notes are written.",chatempty:"Ask anything about this meeting.",askph:"Ask a question…",sumempty:"The summary will appear after the meeting.",qaempty:"Questions raised in the meeting will be answered here from your sources.",trsample:"Thanks for jumping on. For the full rollout…",askempty:"Ask about any meeting or source.",srcfiles:"PDF, Office, text and Markdown files",srcdocs:"Google Docs and web bookmarks",srcadd:"Add source",statm:"Meetings recorded",langl:"Language",themel:"Theme"},
+ru:{meetings:"Встречи",ask:"Вопросы",sources:"Источники",stats:"Статистика",settings:"Настройки",powered:"На базе EmbeddingGemma 2",tokens:"токенов сэкономлено",mtitle:"Запуск EmbeddingGemma 2 с Foresight",mdate:"Пт, 2 окт 2026",notes:"Заметки",chat:"Чат",summary:"Итоги",tr:"Расшифровка",qa:"Вопросы live",short:"Краткие заметки",enh:"Расширенные заметки",std:"Стандарт",liveenh:"Live-расширение",ph:"Записывайте короткие пункты…",emptyenh:"Расширенные заметки появятся здесь по мере записи кратких.",chatempty:"Спросите что угодно об этой встрече.",askph:"Задайте вопрос…",sumempty:"Итоги появятся после встречи.",qaempty:"Вопросы со встречи получат ответы здесь из ваших источников.",trsample:"Спасибо, что подключились. По полному запуску…",askempty:"Спросите о любой встрече или источнике.",srcfiles:"Файлы PDF, Office, текст и Markdown",srcdocs:"Google Docs и закладки сайтов",srcadd:"Добавить источник",statm:"Записано встреч",langl:"Язык",themel:"Тема"}};
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+function setLang(l){
+  if(!T[l])l="en";
+  document.documentElement.lang=l;
+  $$("[data-i]").forEach(e=>e.textContent=T[l][e.dataset.i]);
+  $$("[data-ph]").forEach(e=>e.placeholder=T[l][e.dataset.ph]);
+  $$("#lang button").forEach(b=>b.classList.toggle("on",b.dataset.l===l));
+  store.set("lang",l);
+}
+function setTheme(t){
+  if(t==="auto")document.documentElement.removeAttribute("data-theme");else document.documentElement.dataset.theme=t;
+  $$("#theme button").forEach(b=>b.classList.toggle("on",b.dataset.th===t));
+  store.set("theme",t);
+}
+function show(id){
+  $$("main > section").forEach(s=>s.classList.toggle("on",s.id==="s-"+id));
+  $$("#nav button").forEach(b=>b.classList.toggle("on",b.dataset.s===id));
+  $("main").scrollTop=0;
+}
+$("#nav").onclick=e=>{const b=e.target.closest("button");if(b)show(b.dataset.s)};
+$("#tabs").onclick=e=>{const b=e.target.closest(".tab");if(!b)return;
+  $$("#tabs .tab").forEach(t=>t.classList.toggle("on",t===b));
+  ["notes","chat","summary","tr","qa"].forEach(k=>$("#p-"+k).hidden=k!==b.dataset.t)};
+$("#seg").onclick=e=>{const b=e.target.closest("button");if(!b)return;
+  $$("#seg button").forEach(x=>x.classList.toggle("on",x===b));
+  const sh=b.dataset.p==="short";
+  $("#pane-short").style.display=sh?"flex":"none";$("#pane-enh").style.display=sh?"none":"flex"};
+$("#lang").onclick=e=>{const b=e.target.closest("button");if(b)setLang(b.dataset.l)};
+$("#theme").onclick=e=>{const b=e.target.closest("button");if(b)setTheme(b.dataset.th)};
+let fs=15;
+function font(d){fs=Math.min(22,Math.max(12,fs+d));$("#trbox").style.fontSize=fs+"px"}
+$("#am").onclick=()=>font(-1);$("#ap").onclick=()=>font(1);
+
+// visual demo of the recording bar (real microphone comes in step 2)
+const wave=$("#wave");for(let i=0;i<30;i++)wave.appendChild(document.createElement("i"));
+let sec=0,tm=null;
+function tick(){sec++;$("#time").textContent=String(Math.floor(sec/60)).padStart(2,"0")+":"+String(sec%60).padStart(2,"0")}
+function anim(){$$("#wave i").forEach(b=>b.style.height=(4+Math.random()*20)+"px")}
+$("#pp").onclick=()=>{
+  const on=!$("#rec").classList.contains("on");
+  $("#rec").classList.toggle("on",on);
+  $("#pp use").setAttribute("href",on?"#i-pause":"#i-play");
+  if(on){tm=setInterval(()=>{tick();},1000);window.wv=setInterval(anim,140)}
+  else{clearInterval(tm);clearInterval(window.wv);$$("#wave i").forEach(b=>b.style.height="4px")}
+};
+setTheme(store.get("theme")||"auto");
+setLang(store.get("lang")||((navigator.language||"").startsWith("ru")?"ru":"en"));
+</script>
+</body>
+</html>
