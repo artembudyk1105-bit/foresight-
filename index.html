@@ -6,15 +6,16 @@
 <meta name="theme-color" content="#f4f4f4">
 <title>Foresight</title>
 <style>
-:root{--bg:#f4f4f4;--card:#fff;--ink:#141414;--mut:#6b6b6b;--line:#e4e4e4;--acc:#141414;--accbg:#e6e6e6;--chip:#ececec;--live:#e4e4e4;--livet:#141414;--rec:#d93025;--sh:0 2px 10px rgba(0,0,0,.08);color-scheme:light}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121212;--card:#1c1c1c;--ink:#ededed;--mut:#9a9a9a;--line:#2c2c2c;--acc:#ededed;--accbg:#2c2c2c;--chip:#262626;--live:#2c2c2c;--livet:#ededed;--sh:0 2px 10px rgba(0,0,0,.4);color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#121212;--card:#1c1c1c;--ink:#ededed;--mut:#9a9a9a;--line:#2c2c2c;--acc:#ededed;--accbg:#2c2c2c;--chip:#262626;--live:#2c2c2c;--livet:#ededed;--sh:0 2px 10px rgba(0,0,0,.4);color-scheme:dark}
+:root{--bg:#f4f4f4;--card:#fff;--ink:#141414;--mut:#6b6b6b;--line:#e4e4e4;--acc:#141414;--accbg:#e6e6e6;--chip:#ececec;--rec:#d93025;--sh:0 2px 10px rgba(0,0,0,.08);--err:#b3261e;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121212;--card:#1c1c1c;--ink:#ededed;--mut:#9a9a9a;--line:#2c2c2c;--acc:#ededed;--accbg:#2c2c2c;--chip:#262626;--sh:0 2px 10px rgba(0,0,0,.4);--err:#f2b8b5;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#121212;--card:#1c1c1c;--ink:#ededed;--mut:#9a9a9a;--line:#2c2c2c;--acc:#ededed;--accbg:#2c2c2c;--chip:#262626;--sh:0 2px 10px rgba(0,0,0,.4);--err:#f2b8b5;color-scheme:dark}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;margin:0}
-body{background:var(--bg);color:var(--ink);font:15px/1.45 "Google Sans",Roboto,system-ui,-apple-system,sans-serif;background-color:var(--bg)}
+body{background:var(--bg);color:var(--ink);font:15px/1.45 "Google Sans",Roboto,system-ui,-apple-system,sans-serif}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:10}
 #app{height:100%;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px);max-width:640px;margin:0 auto}
-button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+button,input{font:inherit;color:inherit}
+button{border:0;background:none;cursor:pointer}
 svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
 .top{display:flex;align-items:center;gap:8px;padding:10px 14px 4px}
 .logo{width:26px;height:26px;border-radius:50%;background:conic-gradient(#e2e2e2,#9a9a9a,#f3f3f3,#b5b5b5,#e2e2e2);flex:none}
@@ -22,18 +23,19 @@ svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke
 .chips{display:flex;gap:6px;overflow-x:auto;padding:4px 14px 8px;scrollbar-width:none}
 .chips::-webkit-scrollbar{display:none}
 .chip{background:var(--chip);border:1px solid var(--line);border-radius:8px;padding:3px 9px;font-size:12px;color:var(--mut);white-space:nowrap}
-.rec{margin:0 14px 8px;background:var(--card);box-shadow:var(--sh);border-radius:22px;display:flex;align-items:center;gap:10px;padding:8px 14px;color:var(--acc)}
+.rec{margin:0 14px 8px;background:var(--card);box-shadow:var(--sh);border-radius:22px;display:flex;align-items:center;gap:10px;padding:8px 10px 8px 14px}
 .dot{width:9px;height:9px;border-radius:50%;background:var(--rec);flex:none;opacity:.35}
 .rec.on .dot{opacity:1}
 #time{font-weight:500;font-variant-numeric:tabular-nums}
 #wave{flex:1;display:flex;align-items:center;justify-content:space-between;height:26px;min-width:0}
-#wave i{display:block;width:3px;border-radius:2px;background:currentColor;height:4px;transition:height .12s}
+#wave i{display:block;width:3px;border-radius:2px;background:var(--mut);height:4px;transition:height .12s}
+#pp{width:40px;height:40px;border-radius:50%;background:var(--acc);color:var(--card);display:grid;place-items:center;flex:none}
 main{flex:1;overflow-y:auto;padding:0 14px 12px;min-height:0}
 section{display:none}
 section.on{display:block}
 .head{display:flex;align-items:center;gap:10px;margin:6px 0 10px}
 .rb{width:40px;height:40px;border-radius:50%;background:var(--chip);display:grid;place-items:center;border:1px solid var(--line)}
-.head h2{font-size:19px;font-weight:500;margin:0;line-height:1.2}
+.big{font-size:21px;font-weight:500;margin:8px 0 12px}
 .meta{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 12px}
 .tabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;margin-bottom:10px}
 .tabs::-webkit-scrollbar{display:none}
@@ -43,35 +45,33 @@ section.on{display:block}
 .tool{display:flex;align-items:center;gap:2px;margin-bottom:10px;flex-wrap:wrap}
 .tool button{width:34px;height:34px;border-radius:8px;display:grid;place-items:center}
 .tool .sp{flex:1}
-.pill{background:var(--chip);border-radius:16px;padding:6px 12px;font-size:13px;color:var(--mut);width:auto!important}
+.pill{background:var(--chip);border-radius:16px;padding:6px 12px;font-size:13px;color:var(--mut)}
 .pill.live{background:var(--acc);color:var(--card)}
 .seg{display:flex;background:var(--chip);border-radius:14px;padding:3px;margin-bottom:10px}
 .seg button{flex:1;padding:7px 4px;border-radius:11px;font-size:13px;color:var(--mut)}
 .seg button.on{background:var(--card);color:var(--ink);font-weight:500;box-shadow:0 1px 2px rgba(0,0,0,.12)}
 .lab{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:var(--mut);margin-bottom:6px}
-.badge{background:var(--live);color:var(--livet);border-radius:10px;padding:1px 8px;font-size:11px;font-weight:500}
-textarea,input{font:inherit;color:inherit;border:0;outline:0;background:none;width:100%;resize:none}
+.badge{background:var(--chip);color:var(--ink);border-radius:10px;padding:1px 8px;font-size:11px;font-weight:500}
+textarea,.fld{font:inherit;color:inherit;border:0;outline:0;background:none;width:100%;resize:none}
 textarea{flex:1;min-height:30vh}
+.fld{background:var(--chip);border-radius:10px;padding:10px 12px;margin-top:6px}
+.btn{background:var(--acc);color:var(--card);border-radius:14px;padding:9px 16px;margin-top:8px;font-weight:500}
 .empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;color:var(--mut);padding:20px;font-size:13px}
 .empty svg{width:34px;height:34px;opacity:.6}
-.msg{display:flex;gap:10px;padding:6px 0}
-.av{width:34px;height:34px;border-radius:50%;background:#8a8a8a;color:#fff;display:grid;place-items:center;font-size:12px;font-weight:600;flex:none}
-.msg b{font-weight:600}.msg small{color:var(--mut);margin-left:6px}
-.inp{display:flex;gap:8px;align-items:center;background:var(--chip);border-radius:24px;padding:6px 6px 6px 16px;margin-top:auto}
-.inp button{width:38px;height:38px;border-radius:50%;background:var(--acc);color:var(--card);display:grid;place-items:center}
-.row{display:flex;align-items:center;gap:12px;background:var(--card);border-radius:16px;padding:12px 14px;margin-bottom:8px}
-.row span{flex:1}
-.stat{background:var(--card);border-radius:20px;padding:16px;margin-bottom:10px}
-.stat strong{display:block;font-size:30px;font-weight:500;color:var(--acc)}
-.big{font-size:21px;font-weight:500;margin:8px 0 12px}
+.line{padding:8px 0;border-bottom:1px solid var(--line);font-size:15px}
+.line small{display:block;color:var(--mut);font-size:12px;margin-bottom:2px}
+.line.err{color:var(--err)}
+.row{display:flex;flex-direction:column;background:var(--card);border-radius:16px;padding:12px 14px;margin-bottom:8px}
+.row .lbl{font-weight:500}
+.lang{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.lang button{padding:7px 16px;border-radius:16px;background:var(--chip)}
+.lang button.on{background:var(--acc);color:var(--card);font-weight:500}
+.note{font-size:12px;color:var(--mut);margin-top:6px}
 nav{display:flex;background:var(--card);border-top:1px solid var(--line);padding:6px 4px calc(6px + env(safe-area-inset-bottom,0px))}
 nav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;color:var(--mut);padding:4px 0}
 nav button span{padding:3px 16px;border-radius:14px;display:block;line-height:0}
 nav button.on{color:var(--ink);font-weight:500}
 nav button.on span{background:var(--accbg);color:var(--acc)}
-.lang{display:flex;gap:8px}
-.lang button{padding:7px 16px;border-radius:16px;background:var(--chip)}
-.lang button.on{background:var(--acc);color:var(--card);font-weight:500}
 [hidden]{display:none!important}
 button:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
 </style>
@@ -89,15 +89,13 @@ button:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
 <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5l11 7-11 7z"/></symbol>
 <symbol id="i-ul" viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/></symbol>
 <symbol id="i-ol" viewBox="0 0 24 24"><path d="M10 6h10M10 12h10M10 18h10M4 5l1-1v4M4 14h2l-2 3h2"/></symbol>
-<symbol id="i-copy" viewBox="0 0 24 24"><path d="M8 8h11v12H8zM5 16V4h11"/></symbol>
 <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2zM19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></symbol>
 <symbol id="i-send" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
-<symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
 </defs></svg>
 
 <div id="app">
   <div class="top"><div class="logo"></div><h1>Foresight</h1></div>
-  <div class="chips"><span class="chip" data-i="powered"></span><span class="chip"><b>4.91M</b> <span data-i="tokens"></span></span></div>
+  <div class="chips"><span class="chip" data-i="powered"></span></div>
   <div class="rec" id="rec">
     <span class="dot"></span><span id="time">00:00</span><div id="wave"></div>
     <button id="pp" aria-label="Record"><svg><use href="#i-play"/></svg></button>
@@ -110,7 +108,7 @@ button:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
         <button class="rb" aria-label="Calendar"><svg><use href="#i-cal"/></svg></button>
       </div>
       <h2 class="big" data-i="mtitle"></h2>
-      <div class="meta"><span class="chip" data-i="mdate"></span><span class="chip">3:50 PM – 4:20 PM</span><span class="chip">Zoom</span></div>
+      <div class="meta"><span class="chip" data-i="mdate"></span><span class="chip">Zoom</span></div>
       <div class="tabs" id="tabs">
         <button class="tab on" data-t="notes" data-i="notes"></button>
         <button class="tab" data-t="chat" data-i="chat"></button>
@@ -121,45 +119,46 @@ button:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
 
       <div class="card" id="p-notes">
         <div class="seg" id="seg"><button class="on" data-p="short" data-i="short"></button><button data-p="enh" data-i="enh"></button></div>
-        <div class="tool">
-          <button aria-label="Bold"><b>B</b></button><button aria-label="Italic"><i>I</i></button>
-          <button aria-label="List"><svg><use href="#i-ul"/></svg></button><button aria-label="Numbered"><svg><use href="#i-ol"/></svg></button>
-          <button aria-label="Text">T</button><span class="sp"></span>
-          <button class="pill" data-i="std"></button><button class="pill live" data-i="liveenh"></button>
-        </div>
         <div id="pane-short" style="display:flex;flex-direction:column;flex:1">
-          <div class="lab"><span data-i="short"></span><span class="badge">Live</span></div>
+          <div class="lab"><span data-i="short"></span><span class="badge" data-i="live"></span></div>
           <textarea id="note" data-ph="ph"></textarea>
         </div>
         <div id="pane-enh" class="empty" style="display:none"><svg><use href="#i-spark"/></svg><span data-i="emptyenh"></span></div>
       </div>
 
-      <div class="card" id="p-chat" hidden><div class="empty"><svg><use href="#i-chat"/></svg><span data-i="chatempty"></span></div>
-        <div class="inp"><input data-ph="askph"><button aria-label="Send"><svg><use href="#i-send"/></svg></button></div></div>
+      <div class="card" id="p-chat" hidden><div class="empty"><svg><use href="#i-chat"/></svg><span data-i="chatempty"></span></div></div>
       <div class="card" id="p-summary" hidden><div class="empty"><svg><use href="#i-doc"/></svg><span data-i="sumempty"></span></div></div>
       <div class="card" id="p-tr" hidden>
         <div class="tool"><span class="sp"></span><button id="am" aria-label="Smaller">A−</button><button id="ap" aria-label="Larger">A+</button></div>
-        <div id="trbox"><div class="msg"><div class="av">DB</div><div><b>Daniel Brooks</b><small>00:03</small><div data-i="trsample"></div></div></div></div>
+        <div id="trbox"><div class="empty" id="trhint"><span data-i="trhint"></span></div></div>
       </div>
       <div class="card" id="p-qa" hidden><div class="empty"><svg><use href="#i-spark"/></svg><span data-i="qaempty"></span></div></div>
     </section>
 
     <section id="s-ask"><h2 class="big" data-i="ask"></h2>
-      <div class="card"><div class="empty"><svg><use href="#i-chat"/></svg><span data-i="askempty"></span></div>
-      <div class="inp"><input data-ph="askph"><button aria-label="Send"><svg><use href="#i-send"/></svg></button></div></div></section>
+      <div class="card"><div class="empty"><svg><use href="#i-chat"/></svg><span data-i="askempty"></span></div></div></section>
 
     <section id="s-src"><h2 class="big" data-i="sources"></h2>
-      <div class="row"><svg><use href="#i-doc"/></svg><span data-i="srcfiles"></span></div>
-      <div class="row"><svg><use href="#i-src"/></svg><span data-i="srcdocs"></span></div>
-      <button class="row" style="width:100%;color:var(--acc)"><svg><use href="#i-plus"/></svg><span data-i="srcadd" style="text-align:left"></span></button></section>
+      <div class="row"><span data-i="srcfiles"></span></div>
+      <div class="row"><span data-i="srcdocs"></span></div></section>
 
     <section id="s-stats"><h2 class="big" data-i="stats"></h2>
-      <div class="stat"><strong>4.91M</strong><span data-i="tokens"></span></div>
-      <div class="stat"><strong>0</strong><span data-i="statm"></span></div></section>
+      <div class="row"><span class="big" style="margin:0">0</span><span data-i="statm"></span></div></section>
 
     <section id="s-set"><h2 class="big" data-i="settings"></h2>
-      <div class="row"><span data-i="langl"></span><div class="lang" id="lang"><button data-l="en">English</button><button data-l="ru">Русский</button></div></div>
-      <div class="row"><span data-i="themel"></span><div class="lang" id="theme"><button data-th="auto">Auto</button><button data-th="light">Light</button><button data-th="dark">Dark</button></div></div></section>
+      <div class="row"><span class="lbl" data-i="langl"></span>
+        <div class="lang" id="lang"><button data-l="en">English</button><button data-l="ru">Русский</button></div></div>
+      <div class="row"><span class="lbl" data-i="themel"></span>
+        <div class="lang" id="theme"><button data-th="auto" data-i="auto"></button><button data-th="light" data-i="light"></button><button data-th="dark" data-i="dark"></button></div></div>
+      <div class="row"><span class="lbl" data-i="keyl"></span>
+        <input class="fld" id="gkey" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" data-ph="keyph">
+        <button class="btn" id="savekey" data-i="save"></button>
+        <span class="note" data-i="keynote"></span></div>
+      <div class="row"><span class="lbl" data-i="modell"></span>
+        <input class="fld" id="gmodel" autocomplete="off" autocapitalize="off" spellcheck="false">
+        <button class="btn" id="savemodel" data-i="save"></button>
+        <span class="note" data-i="modelnote"></span></div>
+      <span class="note" id="saved"></span></section>
   </main>
 
   <nav id="nav">
@@ -173,13 +172,15 @@ button:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
 
 <script>
 const T={
-en:{meetings:"Meetings",ask:"Ask",sources:"Sources",stats:"Stats",settings:"Settings",powered:"Powered by EmbeddingGemma 2",tokens:"Tokens saved",mtitle:"EmbeddingGemma 2 Launch with Foresight",mdate:"Fri, Oct 2, 2026",notes:"Notes",chat:"Chat",summary:"Summary",tr:"Transcript",qa:"Live Q&A",short:"Shorthand notes",enh:"Live enhanced notes",std:"Standard",liveenh:"Live Enhance",ph:"Jot quick points here…",emptyenh:"Live enhanced notes will appear here as shorthand notes are written.",chatempty:"Ask anything about this meeting.",askph:"Ask a question…",sumempty:"The summary will appear after the meeting.",qaempty:"Questions raised in the meeting will be answered here from your sources.",trsample:"Thanks for jumping on. For the full rollout…",askempty:"Ask about any meeting or source.",srcfiles:"PDF, Office, text and Markdown files",srcdocs:"Google Docs and web bookmarks",srcadd:"Add source",statm:"Meetings recorded",langl:"Language",themel:"Theme"},
-ru:{meetings:"Встречи",ask:"Вопросы",sources:"Источники",stats:"Статистика",settings:"Настройки",powered:"На базе EmbeddingGemma 2",tokens:"токенов сэкономлено",mtitle:"Запуск EmbeddingGemma 2 с Foresight",mdate:"Пт, 2 окт 2026",notes:"Заметки",chat:"Чат",summary:"Итоги",tr:"Расшифровка",qa:"Вопросы live",short:"Краткие заметки",enh:"Расширенные заметки",std:"Стандарт",liveenh:"Live-расширение",ph:"Записывайте короткие пункты…",emptyenh:"Расширенные заметки появятся здесь по мере записи кратких.",chatempty:"Спросите что угодно об этой встрече.",askph:"Задайте вопрос…",sumempty:"Итоги появятся после встречи.",qaempty:"Вопросы со встречи получат ответы здесь из ваших источников.",trsample:"Спасибо, что подключились. По полному запуску…",askempty:"Спросите о любой встрече или источнике.",srcfiles:"Файлы PDF, Office, текст и Markdown",srcdocs:"Google Docs и закладки сайтов",srcadd:"Добавить источник",statm:"Записано встреч",langl:"Язык",themel:"Тема"}};
+en:{meetings:"Meetings",ask:"Ask",sources:"Sources",stats:"Stats",settings:"Settings",powered:"Powered by EmbeddingGemma 2",mtitle:"EmbeddingGemma 2 Launch with Foresight",mdate:"Fri, Oct 2, 2026",notes:"Notes",chat:"Chat",summary:"Summary",tr:"Transcript",qa:"Live Q&A",short:"Shorthand notes",enh:"Live enhanced notes",live:"Live",ph:"Jot quick points here…",emptyenh:"Live enhanced notes will appear here as shorthand notes are written.",chatempty:"Ask anything about this meeting.",sumempty:"The summary will appear after the meeting.",qaempty:"Questions raised in the meeting will be answered here from your sources.",trhint:"Press the red dot to start recording. The text will appear here.",askempty:"Ask about any meeting or source.",srcfiles:"PDF, Office, text and Markdown files",srcdocs:"Google Docs and web bookmarks",statm:"Meetings recorded",langl:"Language",themel:"Theme",auto:"Auto",light:"Light",dark:"Dark",keyl:"Gemini API key",keyph:"Paste key here",save:"Save",keynote:"Stored only on this phone. Never sent anywhere except Google.",modell:"Model name",modelnote:"Default: gemini-3-flash-preview. Change it if Google reports the model is unavailable.",saved:"Saved.",nokey:"Add your Gemini API key in Settings first.",micerr:"Microphone error",empty:"No speech recognized in this part.",noapi:"Request failed"},
+ru:{meetings:"Встречи",ask:"Вопросы",sources:"Источники",stats:"Статистика",settings:"Настройки",powered:"На базе EmbeddingGemma 2",mtitle:"Запуск EmbeddingGemma 2 с Foresight",mdate:"Пт, 2 окт 2026",notes:"Заметки",chat:"Чат",summary:"Итоги",tr:"Расшифровка",qa:"Вопросы live",short:"Краткие заметки",enh:"Расширенные заметки",live:"Live",ph:"Записывайте короткие пункты…",emptyenh:"Расширенные заметки появятся здесь по мере записи кратких.",chatempty:"Спросите что угодно об этой встрече.",sumempty:"Итоги появятся после встречи.",qaempty:"Вопросы со встречи получат ответы здесь из ваших источников.",trhint:"Нажмите красную точку, чтобы начать запись. Текст появится здесь.",askempty:"Спросите о любой встрече или источнике.",srcfiles:"Файлы PDF, Office, текст и Markdown",srcdocs:"Google Docs и закладки сайтов",statm:"Записано встреч",langl:"Язык",themel:"Тема",auto:"Авто",light:"Светлая",dark:"Тёмная",keyl:"Ключ Gemini API",keyph:"Вставьте ключ сюда",save:"Сохранить",keynote:"Хранится только на этом телефоне. Отправляется только в Google.",modell:"Название модели",modelnote:"По умолчанию: gemini-3-flash-preview. Меняйте, если Google сообщит, что модель недоступна.",saved:"Сохранено.",nokey:"Сначала добавьте ключ Gemini в Настройках.",micerr:"Ошибка микрофона",empty:"В этом фрагменте речь не распознана.",noapi:"Запрос не выполнен"}
+};
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+let lang="en";
 function setLang(l){
   if(!T[l])l="en";
-  document.documentElement.lang=l;
+  lang=l;document.documentElement.lang=l;
   $$("[data-i]").forEach(e=>e.textContent=T[l][e.dataset.i]);
   $$("[data-ph]").forEach(e=>e.placeholder=T[l][e.dataset.ph]);
   $$("#lang button").forEach(b=>b.classList.toggle("on",b.dataset.l===l));
@@ -209,18 +210,120 @@ let fs=15;
 function font(d){fs=Math.min(22,Math.max(12,fs+d));$("#trbox").style.fontSize=fs+"px"}
 $("#am").onclick=()=>font(-1);$("#ap").onclick=()=>font(1);
 
-// visual demo of the recording bar (real microphone comes in step 2)
+// Settings: key and model stored only in this phone's localStorage
+$("#gkey").value=store.get("gkey")||"";
+$("#gmodel").value=store.get("gmodel")||"gemini-3-flash-preview";
+function flashSaved(){$("#saved").textContent=T[lang].saved;setTimeout(()=>$("#saved").textContent="",1500)}
+$("#savekey").onclick=()=>{store.set("gkey",$("#gkey").value.trim());flashSaved()};
+$("#savemodel").onclick=()=>{store.set("gmodel",$("#gmodel").value.trim()||"gemini-3-flash-preview");flashSaved()};
+
+// Transcript output
+function addLine(kind,text){
+  const hint=$("#trhint");if(hint)hint.remove();
+  const d=document.createElement("div");
+  d.className="line"+(kind==="error"?" err":"");
+  const t=new Date().toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"});
+  const s=document.createElement("small");s.textContent=t;
+  const p=document.createElement("span");p.textContent=text;
+  d.appendChild(s);d.appendChild(p);
+  $("#trbox").appendChild(d);
+  d.scrollIntoView({block:"end"});
+}
+
+// Recording: one short clip after another, each sent for transcription
+let stream=null,rec=null,running=false,segTimer=null,queue=Promise.resolve();
+function pickMime(){
+  if(!window.MediaRecorder||!MediaRecorder.isTypeSupported)return "";
+  return ["audio/mp4","audio/webm"].find(m=>MediaRecorder.isTypeSupported(m))||"";
+}
+function newSeg(){
+  if(!running)return;
+  const mt=pickMime();
+  rec=new MediaRecorder(stream,mt?{mimeType:mt}:undefined);
+  const parts=[];
+  rec.ondataavailable=e=>{if(e.data&&e.data.size)parts.push(e.data)};
+  rec.onstop=()=>{
+    const blob=new Blob(parts,{type:rec.mimeType||mt||"audio/mp4"});
+    if(blob.size>2000)queue=queue.then(()=>transcribe(blob));
+    if(running)newSeg();
+  };
+  rec.start();
+  segTimer=setTimeout(()=>{if(rec&&rec.state!=="inactive")rec.stop()},12000);
+}
+async function startRec(){
+  stream=await navigator.mediaDevices.getUserMedia({audio:true});
+  running=true;newSeg();
+}
+function stopRec(){
+  running=false;clearTimeout(segTimer);
+  if(rec&&rec.state!=="inactive")rec.stop();
+  if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}
+}
+
+// Convert recorded clip to 16-bit mono WAV (the format used in Google's examples)
+async function toWav(blob){
+  const AC=window.AudioContext||window.webkitAudioContext;
+  const ctx=new AC();
+  const audio=await ctx.decodeAudioData(await blob.arrayBuffer());
+  await ctx.close();
+  const ch=audio.getChannelData(0),sr=audio.sampleRate;
+  const len=ch.length*2;
+  const v=new DataView(new ArrayBuffer(44+len));
+  const w=(o,s)=>{for(let i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i))};
+  w(0,"RIFF");v.setUint32(4,36+len,true);w(8,"WAVE");w(12,"fmt ");
+  v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);
+  v.setUint32(24,sr,true);v.setUint32(28,sr*2,true);v.setUint16(32,2,true);v.setUint16(34,16,true);
+  w(36,"data");v.setUint32(40,len,true);
+  for(let i=0,o=44;i<ch.length;i++,o+=2){const s=Math.max(-1,Math.min(1,ch[i]));v.setInt16(o,s<0?s*0x8000:s*0x7fff,true)}
+  return new Uint8Array(v.buffer);
+}
+function toBase64(u8){
+  let s="";
+  for(let i=0;i<u8.length;i+=0x8000)s+=String.fromCharCode.apply(null,u8.subarray(i,i+0x8000));
+  return btoa(s);
+}
+async function transcribe(blob){
+  const key=store.get("gkey")||"";
+  const model=store.get("gmodel")||"gemini-3-flash-preview";
+  if(!key){addLine("error",T[lang].nokey);return}
+  try{
+    const wav=await toWav(blob);
+    const url="https://generativelanguage.googleapis.com/v1beta/models/"+encodeURIComponent(model)+":generateContent";
+    const r=await fetch(url,{
+      method:"POST",
+      headers:{"Content-Type":"application/json","x-goog-api-key":key},
+      body:JSON.stringify({contents:[{parts:[
+        {text:"Transcribe this audio accurately. Return only the transcription text, no commentary."},
+        {inline_data:{mime_type:"audio/wav",data:toBase64(wav)}}
+      ]}]})
+    });
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok){addLine("error",(j.error&&j.error.message)||(T[lang].noapi+" ("+r.status+")"));return}
+    const parts=(j.candidates&&j.candidates[0]&&j.candidates[0].content&&j.candidates[0].content.parts)||[];
+    const text=parts.map(p=>p.text||"").join("").trim();
+    addLine(text?"text":"error",text||T[lang].empty);
+  }catch(e){addLine("error",String((e&&e.message)||e))}
+}
+
+// Record button and timer / wave animation
 const wave=$("#wave");for(let i=0;i<30;i++)wave.appendChild(document.createElement("i"));
-let sec=0,tm=null;
+let sec=0,tm=null,wv=null;
 function tick(){sec++;$("#time").textContent=String(Math.floor(sec/60)).padStart(2,"0")+":"+String(sec%60).padStart(2,"0")}
 function anim(){$$("#wave i").forEach(b=>b.style.height=(4+Math.random()*20)+"px")}
-$("#pp").onclick=()=>{
-  const on=!$("#rec").classList.contains("on");
-  $("#rec").classList.toggle("on",on);
-  $("#pp use").setAttribute("href",on?"#i-pause":"#i-play");
-  if(on){tm=setInterval(()=>{tick();},1000);window.wv=setInterval(anim,140)}
-  else{clearInterval(tm);clearInterval(window.wv);$$("#wave i").forEach(b=>b.style.height="4px")}
+$("#pp").onclick=async()=>{
+  if(!running){
+    try{await startRec()}catch(e){addLine("error",T[lang].micerr+": "+(e.message||e));return}
+    sec=0;$("#time").textContent="00:00";
+    tm=setInterval(tick,1000);wv=setInterval(anim,140);
+    $("#rec").classList.add("on");$("#pp use").setAttribute("href","#i-pause");
+  }else{
+    stopRec();
+    clearInterval(tm);clearInterval(wv);
+    $("#rec").classList.remove("on");$("#pp use").setAttribute("href","#i-play");
+    $$("#wave i").forEach(b=>b.style.height="4px");
+  }
 };
+
 setTheme(store.get("theme")||"auto");
 setLang(store.get("lang")||((navigator.language||"").startsWith("ru")?"ru":"en"));
 </script>
