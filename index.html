@@ -56,8 +56,10 @@ textarea,.fld{font:inherit;color:inherit;border:0;outline:0;background:none;widt
 textarea{flex:1;min-height:30vh}
 .fld{background:var(--chip);border-radius:10px;padding:10px 12px;margin-top:6px}
 .btn{background:var(--acc);color:var(--card);border-radius:14px;padding:9px 16px;margin-top:8px;font-weight:500}
+.btn:disabled{opacity:.55}
 .empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;color:var(--mut);padding:20px;font-size:13px}
 .empty svg{width:34px;height:34px;opacity:.6}
+.out{white-space:pre-wrap;word-wrap:break-word;margin-top:10px;font-size:15px}
 .line{padding:8px 0;border-bottom:1px solid var(--line);font-size:15px}
 .line small{display:block;color:var(--mut);font-size:12px;margin-bottom:2px}
 .line.err{color:var(--err)}
@@ -120,7 +122,12 @@ button:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
           <div class="lab"><span data-i="short"></span><span class="badge" data-i="live"></span></div>
           <textarea id="note" data-ph="ph"></textarea>
         </div>
-        <div id="pane-enh" class="empty" style="display:none"><svg><use href="#i-spark"/></svg><span data-i="emptyenh"></span></div>
+        <div id="pane-enh" style="display:none;flex-direction:column;flex:1">
+          <button class="btn" id="enhbtn" data-i="enhbtn" style="align-self:flex-start;margin-top:0"></button>
+          <span class="note" id="enhst"></span>
+          <div class="empty" id="enhhint"><svg><use href="#i-spark"/></svg><span data-i="emptyenh"></span></div>
+          <div class="out" id="enhout"></div>
+        </div>
       </div>
 
       <div class="card" id="p-chat" hidden><div class="empty"><svg><use href="#i-chat"/></svg><span data-i="chatempty"></span></div></div>
@@ -170,8 +177,8 @@ button:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
 <script>
 const DEFMODEL="gemini-2.5-flash";
 const T={
-en:{meetings:"Meetings",ask:"Ask",sources:"Sources",stats:"Stats",settings:"Settings",powered:"Powered by EmbeddingGemma 2",mtitle:"EmbeddingGemma 2 Launch with Foresight",mdate:"Fri, Oct 2, 2026",notes:"Notes",chat:"Chat",summary:"Summary",tr:"Transcript",qa:"Live Q&A",short:"Shorthand notes",enh:"Live enhanced notes",live:"Live",ph:"Jot quick points here…",emptyenh:"Live enhanced notes will appear here as shorthand notes are written.",chatempty:"Ask anything about this meeting.",sumempty:"The summary will appear after the meeting.",qaempty:"Questions raised in the meeting will be answered here from your sources.",trhint:"Press the red dot to start recording. The text will appear here.",askempty:"Ask about any meeting or source.",srcfiles:"PDF, Office, text and Markdown files",srcdocs:"Google Docs and web bookmarks",statm:"Meetings recorded",langl:"Language",themel:"Theme",auto:"Auto",light:"Light",dark:"Dark",keyl:"Gemini API key",keyph:"Paste key here",save:"Save",keynote:"Stored only on this phone. Never sent anywhere except Google.",modell:"Model name",modelnote:"Default: gemini-2.5-flash. Change it if Google reports the model is unavailable.",saved:"Saved.",nokey:"Add your Gemini API key in Settings first.",micerr:"Microphone error",empty:"No speech recognized in this part.",noapi:"Request failed"},
-ru:{meetings:"Встречи",ask:"Вопросы",sources:"Источники",stats:"Статистика",settings:"Настройки",powered:"На базе EmbeddingGemma 2",mtitle:"Запуск EmbeddingGemma 2 с Foresight",mdate:"Пт, 2 окт 2026",notes:"Заметки",chat:"Чат",summary:"Итоги",tr:"Расшифровка",qa:"Вопросы live",short:"Краткие заметки",enh:"Расширенные заметки",live:"Live",ph:"Записывайте короткие пункты…",emptyenh:"Расширенные заметки появятся здесь по мере записи кратких.",chatempty:"Спросите что угодно об этой встрече.",sumempty:"Итоги появятся после встречи.",qaempty:"Вопросы со встречи получат ответы здесь из ваших источников.",trhint:"Нажмите красную точку, чтобы начать запись. Текст появится здесь.",askempty:"Спросите о любой встрече или источнике.",srcfiles:"Файлы PDF, Office, текст и Markdown",srcdocs:"Google Docs и закладки сайтов",statm:"Записано встреч",langl:"Язык",themel:"Тема",auto:"Авто",light:"Светлая",dark:"Тёмная",keyl:"Ключ Gemini API",keyph:"Вставьте ключ сюда",save:"Сохранить",keynote:"Хранится только на этом телефоне. Отправляется только в Google.",modell:"Название модели",modelnote:"По умолчанию: gemini-2.5-flash. Меняйте, если Google сообщит, что модель недоступна.",saved:"Сохранено.",nokey:"Сначала добавьте ключ Gemini в Настройках.",micerr:"Ошибка микрофона",empty:"В этом фрагменте речь не распознана.",noapi:"Запрос не выполнен"}
+en:{meetings:"Meetings",ask:"Ask",sources:"Sources",stats:"Stats",settings:"Settings",powered:"Powered by EmbeddingGemma 2",mtitle:"EmbeddingGemma 2 Launch with Foresight",mdate:"Fri, Oct 2, 2026",notes:"Notes",chat:"Chat",summary:"Summary",tr:"Transcript",qa:"Live Q&A",short:"Shorthand notes",enh:"Live enhanced notes",live:"Live",ph:"Jot quick points here…",emptyenh:"Press the button to build enhanced notes from your shorthand notes and the transcript.",enhbtn:"Enhance notes",enhbusy:"Working…",enhnone:"Write shorthand notes or record something first.",chatempty:"Ask anything about this meeting.",sumempty:"The summary will appear after the meeting.",qaempty:"Questions raised in the meeting will be answered here from your sources.",trhint:"Press the red dot to start recording. The text will appear here.",askempty:"Ask about any meeting or source.",srcfiles:"PDF, Office, text and Markdown files",srcdocs:"Google Docs and web bookmarks",statm:"Meetings recorded",langl:"Language",themel:"Theme",auto:"Auto",light:"Light",dark:"Dark",keyl:"Gemini API key",keyph:"Paste key here",save:"Save",keynote:"Stored only on this phone. Never sent anywhere except Google.",modell:"Model name",modelnote:"Default: gemini-2.5-flash. Change it if Google reports the model is unavailable.",saved:"Saved.",nokey:"Add your Gemini API key in Settings first.",micerr:"Microphone error",empty:"No speech recognized in this part.",noapi:"Request failed"},
+ru:{meetings:"Встречи",ask:"Вопросы",sources:"Источники",stats:"Статистика",settings:"Настройки",powered:"На базе EmbeddingGemma 2",mtitle:"Запуск EmbeddingGemma 2 с Foresight",mdate:"Пт, 2 окт 2026",notes:"Заметки",chat:"Чат",summary:"Итоги",tr:"Расшифровка",qa:"Вопросы live",short:"Краткие заметки",enh:"Расширенные заметки",live:"Live",ph:"Записывайте короткие пункты…",emptyenh:"Нажмите кнопку, чтобы получить расширенные заметки из кратких заметок и расшифровки.",enhbtn:"Улучшить заметки",enhbusy:"Работаю…",enhnone:"Сначала напишите краткие заметки или сделайте запись.",chatempty:"Спросите что угодно об этой встрече.",sumempty:"Итоги появятся после встречи.",qaempty:"Вопросы со встречи получат ответы здесь из ваших источников.",trhint:"Нажмите красную точку, чтобы начать запись. Текст появится здесь.",askempty:"Спросите о любой встрече или источнике.",srcfiles:"Файлы PDF, Office, текст и Markdown",srcdocs:"Google Docs и закладки сайтов",statm:"Записано встреч",langl:"Язык",themel:"Тема",auto:"Авто",light:"Светлая",dark:"Тёмная",keyl:"Ключ Gemini API",keyph:"Вставьте ключ сюда",save:"Сохранить",keynote:"Хранится только на этом телефоне. Отправляется только в Google.",modell:"Название модели",modelnote:"По умолчанию: gemini-2.5-flash. Меняйте, если Google сообщит, что модель недоступна.",saved:"Сохранено.",nokey:"Сначала добавьте ключ Gemini в Настройках.",micerr:"Ошибка микрофона",empty:"В этом фрагменте речь не распознана.",noapi:"Запрос не выполнен"}
 };
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
@@ -240,6 +247,44 @@ function addLine(kind,text){
   drawLine(item);
 }
 trLog.forEach(drawLine);
+
+// Enhanced notes: shorthand notes + transcript are sent to Gemini on button press
+function showEnh(t){$("#enhout").textContent=t||"";$("#enhhint").style.display=t?"none":"flex"}
+function enhStatus(t,err){const s=$("#enhst");s.textContent=t||"";s.style.color=err?"var(--err)":""}
+showEnh(store.get("enh")||"");
+let enhBusy=false;
+async function enhance(){
+  if(enhBusy)return;
+  const key=store.get("gkey")||"";
+  const model=store.get("gmodel")||DEFMODEL;
+  if(!key){enhStatus(T[lang].nokey,true);return}
+  const notes=$("#note").value.trim();
+  const tr=trLog.filter(x=>x.kind==="text").map(x=>x.text).join("\n");
+  if(!notes&&!tr){enhStatus(T[lang].enhnone,true);return}
+  const instr=lang==="ru"
+    ?"Ты помощник для заметок на встрече. Ниже краткие заметки пользователя и расшифровка записи. Составь расширенные заметки на русском языке: ключевые темы, принятые решения, задачи (кто, что, срок, если это названо). Не выдумывай факты, которых нет в тексте. Пиши коротко. Простой текст без символов форматирования вроде ** и #; пункты начинай с «- ». Без вступлений и заключений."
+    :"You are a meeting notes assistant. Below are the user's shorthand notes and a transcript of the recording. Write enhanced notes in English: key topics, decisions made, action items (who, what, deadline, if mentioned). Do not invent facts that are not in the text. Keep it concise. Plain text with no formatting symbols like ** or #; start list items with \"- \". No introduction or closing remarks.";
+  const prompt=instr+"\n\n=== SHORTHAND NOTES ===\n"+(notes||"(none)")+"\n\n=== TRANSCRIPT ===\n"+(tr||"(none)");
+  const btn=$("#enhbtn");
+  enhBusy=true;btn.disabled=true;btn.textContent=T[lang].enhbusy;enhStatus("");
+  try{
+    const url="https://generativelanguage.googleapis.com/v1beta/models/"+encodeURIComponent(model)+":generateContent";
+    const r=await fetch(url,{
+      method:"POST",
+      headers:{"Content-Type":"application/json","x-goog-api-key":key},
+      body:JSON.stringify({contents:[{parts:[{text:prompt}]}]})
+    });
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok){enhStatus((j.error&&j.error.message)||(T[lang].noapi+" ("+r.status+")"),true);return}
+    const parts=(j.candidates&&j.candidates[0]&&j.candidates[0].content&&j.candidates[0].content.parts)||[];
+    const text=parts.map(p=>p.text||"").join("").trim();
+    if(!text){enhStatus(T[lang].noapi,true);return}
+    store.set("enh",text);
+    showEnh(text);
+  }catch(e){enhStatus(String((e&&e.message)||e),true)}
+  finally{enhBusy=false;btn.disabled=false;btn.textContent=T[lang].enhbtn}
+}
+$("#enhbtn").onclick=enhance;
 
 // Recording: one short clip after another, each sent for transcription
 let stream=null,rec=null,running=false,segTimer=null,queue=Promise.resolve();
