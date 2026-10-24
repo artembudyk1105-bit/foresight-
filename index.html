@@ -87,10 +87,7 @@ button:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
 <symbol id="i-cal" viewBox="0 0 24 24"><path d="M4 6h16v14H4zM4 10h16M8 3v4M16 3v4"/></symbol>
 <symbol id="i-pause" viewBox="0 0 24 24"><path d="M9 5v14M15 5v14"/></symbol>
 <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5l11 7-11 7z"/></symbol>
-<symbol id="i-ul" viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/></symbol>
-<symbol id="i-ol" viewBox="0 0 24 24"><path d="M10 6h10M10 12h10M10 18h10M4 5l1-1v4M4 14h2l-2 3h2"/></symbol>
 <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2zM19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></symbol>
-<symbol id="i-send" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
 </defs></svg>
 
 <div id="app">
@@ -171,9 +168,10 @@ button:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
 </div>
 
 <script>
+const DEFMODEL="gemini-2.5-flash";
 const T={
-en:{meetings:"Meetings",ask:"Ask",sources:"Sources",stats:"Stats",settings:"Settings",powered:"Powered by EmbeddingGemma 2",mtitle:"EmbeddingGemma 2 Launch with Foresight",mdate:"Fri, Oct 2, 2026",notes:"Notes",chat:"Chat",summary:"Summary",tr:"Transcript",qa:"Live Q&A",short:"Shorthand notes",enh:"Live enhanced notes",live:"Live",ph:"Jot quick points here…",emptyenh:"Live enhanced notes will appear here as shorthand notes are written.",chatempty:"Ask anything about this meeting.",sumempty:"The summary will appear after the meeting.",qaempty:"Questions raised in the meeting will be answered here from your sources.",trhint:"Press the red dot to start recording. The text will appear here.",askempty:"Ask about any meeting or source.",srcfiles:"PDF, Office, text and Markdown files",srcdocs:"Google Docs and web bookmarks",statm:"Meetings recorded",langl:"Language",themel:"Theme",auto:"Auto",light:"Light",dark:"Dark",keyl:"Gemini API key",keyph:"Paste key here",save:"Save",keynote:"Stored only on this phone. Never sent anywhere except Google.",modell:"Model name",modelnote:"Default: gemini-3-flash-preview. Change it if Google reports the model is unavailable.",saved:"Saved.",nokey:"Add your Gemini API key in Settings first.",micerr:"Microphone error",empty:"No speech recognized in this part.",noapi:"Request failed"},
-ru:{meetings:"Встречи",ask:"Вопросы",sources:"Источники",stats:"Статистика",settings:"Настройки",powered:"На базе EmbeddingGemma 2",mtitle:"Запуск EmbeddingGemma 2 с Foresight",mdate:"Пт, 2 окт 2026",notes:"Заметки",chat:"Чат",summary:"Итоги",tr:"Расшифровка",qa:"Вопросы live",short:"Краткие заметки",enh:"Расширенные заметки",live:"Live",ph:"Записывайте короткие пункты…",emptyenh:"Расширенные заметки появятся здесь по мере записи кратких.",chatempty:"Спросите что угодно об этой встрече.",sumempty:"Итоги появятся после встречи.",qaempty:"Вопросы со встречи получат ответы здесь из ваших источников.",trhint:"Нажмите красную точку, чтобы начать запись. Текст появится здесь.",askempty:"Спросите о любой встрече или источнике.",srcfiles:"Файлы PDF, Office, текст и Markdown",srcdocs:"Google Docs и закладки сайтов",statm:"Записано встреч",langl:"Язык",themel:"Тема",auto:"Авто",light:"Светлая",dark:"Тёмная",keyl:"Ключ Gemini API",keyph:"Вставьте ключ сюда",save:"Сохранить",keynote:"Хранится только на этом телефоне. Отправляется только в Google.",modell:"Название модели",modelnote:"По умолчанию: gemini-3-flash-preview. Меняйте, если Google сообщит, что модель недоступна.",saved:"Сохранено.",nokey:"Сначала добавьте ключ Gemini в Настройках.",micerr:"Ошибка микрофона",empty:"В этом фрагменте речь не распознана.",noapi:"Запрос не выполнен"}
+en:{meetings:"Meetings",ask:"Ask",sources:"Sources",stats:"Stats",settings:"Settings",powered:"Powered by EmbeddingGemma 2",mtitle:"EmbeddingGemma 2 Launch with Foresight",mdate:"Fri, Oct 2, 2026",notes:"Notes",chat:"Chat",summary:"Summary",tr:"Transcript",qa:"Live Q&A",short:"Shorthand notes",enh:"Live enhanced notes",live:"Live",ph:"Jot quick points here…",emptyenh:"Live enhanced notes will appear here as shorthand notes are written.",chatempty:"Ask anything about this meeting.",sumempty:"The summary will appear after the meeting.",qaempty:"Questions raised in the meeting will be answered here from your sources.",trhint:"Press the red dot to start recording. The text will appear here.",askempty:"Ask about any meeting or source.",srcfiles:"PDF, Office, text and Markdown files",srcdocs:"Google Docs and web bookmarks",statm:"Meetings recorded",langl:"Language",themel:"Theme",auto:"Auto",light:"Light",dark:"Dark",keyl:"Gemini API key",keyph:"Paste key here",save:"Save",keynote:"Stored only on this phone. Never sent anywhere except Google.",modell:"Model name",modelnote:"Default: gemini-2.5-flash. Change it if Google reports the model is unavailable.",saved:"Saved.",nokey:"Add your Gemini API key in Settings first.",micerr:"Microphone error",empty:"No speech recognized in this part.",noapi:"Request failed"},
+ru:{meetings:"Встречи",ask:"Вопросы",sources:"Источники",stats:"Статистика",settings:"Настройки",powered:"На базе EmbeddingGemma 2",mtitle:"Запуск EmbeddingGemma 2 с Foresight",mdate:"Пт, 2 окт 2026",notes:"Заметки",chat:"Чат",summary:"Итоги",tr:"Расшифровка",qa:"Вопросы live",short:"Краткие заметки",enh:"Расширенные заметки",live:"Live",ph:"Записывайте короткие пункты…",emptyenh:"Расширенные заметки появятся здесь по мере записи кратких.",chatempty:"Спросите что угодно об этой встрече.",sumempty:"Итоги появятся после встречи.",qaempty:"Вопросы со встречи получат ответы здесь из ваших источников.",trhint:"Нажмите красную точку, чтобы начать запись. Текст появится здесь.",askempty:"Спросите о любой встрече или источнике.",srcfiles:"Файлы PDF, Office, текст и Markdown",srcdocs:"Google Docs и закладки сайтов",statm:"Записано встреч",langl:"Язык",themel:"Тема",auto:"Авто",light:"Светлая",dark:"Тёмная",keyl:"Ключ Gemini API",keyph:"Вставьте ключ сюда",save:"Сохранить",keynote:"Хранится только на этом телефоне. Отправляется только в Google.",modell:"Название модели",modelnote:"По умолчанию: gemini-2.5-flash. Меняйте, если Google сообщит, что модель недоступна.",saved:"Сохранено.",nokey:"Сначала добавьте ключ Gemini в Настройках.",micerr:"Ошибка микрофона",empty:"В этом фрагменте речь не распознана.",noapi:"Запрос не выполнен"}
 };
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
@@ -212,23 +210,36 @@ $("#am").onclick=()=>font(-1);$("#ap").onclick=()=>font(1);
 
 // Settings: key and model stored only in this phone's localStorage
 $("#gkey").value=store.get("gkey")||"";
-$("#gmodel").value=store.get("gmodel")||"gemini-3-flash-preview";
+$("#gmodel").value=store.get("gmodel")||DEFMODEL;
 function flashSaved(){$("#saved").textContent=T[lang].saved;setTimeout(()=>$("#saved").textContent="",1500)}
 $("#savekey").onclick=()=>{store.set("gkey",$("#gkey").value.trim());flashSaved()};
-$("#savemodel").onclick=()=>{store.set("gmodel",$("#gmodel").value.trim()||"gemini-3-flash-preview");flashSaved()};
+$("#savemodel").onclick=()=>{store.set("gmodel",$("#gmodel").value.trim()||DEFMODEL);flashSaved()};
+
+// Short notes: saved as you type, restored after reload
+$("#note").value=store.get("notes")||"";
+$("#note").addEventListener("input",()=>store.set("notes",$("#note").value));
 
 // Transcript output
-function addLine(kind,text){
+let trLog=[];
+try{trLog=JSON.parse(store.get("trlog")||"[]")}catch(e){trLog=[]}
+function drawLine(item){
   const hint=$("#trhint");if(hint)hint.remove();
   const d=document.createElement("div");
-  d.className="line"+(kind==="error"?" err":"");
-  const t=new Date().toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"});
-  const s=document.createElement("small");s.textContent=t;
-  const p=document.createElement("span");p.textContent=text;
+  d.className="line"+(item.kind==="error"?" err":"");
+  const s=document.createElement("small");s.textContent=item.time;
+  const p=document.createElement("span");p.textContent=item.text;
   d.appendChild(s);d.appendChild(p);
   $("#trbox").appendChild(d);
   d.scrollIntoView({block:"end"});
 }
+function addLine(kind,text){
+  const item={kind,text,time:new Date().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"})};
+  trLog.push(item);
+  if(trLog.length>500)trLog=trLog.slice(-500);
+  store.set("trlog",JSON.stringify(trLog));
+  drawLine(item);
+}
+trLog.forEach(drawLine);
 
 // Recording: one short clip after another, each sent for transcription
 let stream=null,rec=null,running=false,segTimer=null,queue=Promise.resolve();
@@ -260,7 +271,7 @@ function stopRec(){
   if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}
 }
 
-// Convert recorded clip to 16-bit mono WAV (the format used in Google's examples)
+// Convert recorded clip to 16-bit mono WAV
 async function toWav(blob){
   const AC=window.AudioContext||window.webkitAudioContext;
   const ctx=new AC();
@@ -284,7 +295,7 @@ function toBase64(u8){
 }
 async function transcribe(blob){
   const key=store.get("gkey")||"";
-  const model=store.get("gmodel")||"gemini-3-flash-preview";
+  const model=store.get("gmodel")||DEFMODEL;
   if(!key){addLine("error",T[lang].nokey);return}
   try{
     const wav=await toWav(blob);
