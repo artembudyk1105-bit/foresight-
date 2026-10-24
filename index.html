@@ -45,8 +45,6 @@ section.on{display:block}
 .tool{display:flex;align-items:center;gap:2px;margin-bottom:10px;flex-wrap:wrap}
 .tool button{width:34px;height:34px;border-radius:8px;display:grid;place-items:center}
 .tool .sp{flex:1}
-.pill{background:var(--chip);border-radius:16px;padding:6px 12px;font-size:13px;color:var(--mut)}
-.pill.live{background:var(--acc);color:var(--card)}
 .seg{display:flex;background:var(--chip);border-radius:14px;padding:3px;margin-bottom:10px}
 .seg button{flex:1;padding:7px 4px;border-radius:11px;font-size:13px;color:var(--mut)}
 .seg button.on{background:var(--card);color:var(--ink);font-weight:500;box-shadow:0 1px 2px rgba(0,0,0,.12)}
@@ -57,9 +55,17 @@ textarea{flex:1;min-height:30vh}
 .fld{background:var(--chip);border-radius:10px;padding:10px 12px;margin-top:6px}
 .btn{background:var(--acc);color:var(--card);border-radius:14px;padding:9px 16px;margin-top:8px;font-weight:500}
 .btn:disabled{opacity:.55}
+.link{font-size:12px;color:var(--mut);text-decoration:underline;align-self:flex-start;margin-top:8px;padding:4px 0}
 .empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;color:var(--mut);padding:20px;font-size:13px}
 .empty svg{width:34px;height:34px;opacity:.6}
 .out{white-space:pre-wrap;word-wrap:break-word;margin-top:10px;font-size:15px}
+#chatlog{display:flex;flex-direction:column;flex:1}
+.msg{margin:4px 0;padding:8px 12px;border-radius:14px;max-width:88%;white-space:pre-wrap;word-wrap:break-word}
+.msg.u{background:var(--acc);color:var(--card);align-self:flex-end}
+.msg.a{background:var(--chip);align-self:flex-start}
+.crow{display:flex;gap:8px;align-items:center;margin-top:8px}
+.crow .fld{margin:0;flex:1}
+.crow .btn{margin:0}
 .line{padding:8px 0;border-bottom:1px solid var(--line);font-size:15px}
 .line small{display:block;color:var(--mut);font-size:12px;margin-bottom:2px}
 .line.err{color:var(--err)}
@@ -130,8 +136,21 @@ button:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
         </div>
       </div>
 
-      <div class="card" id="p-chat" hidden><div class="empty"><svg><use href="#i-chat"/></svg><span data-i="chatempty"></span></div></div>
-      <div class="card" id="p-summary" hidden><div class="empty"><svg><use href="#i-doc"/></svg><span data-i="sumempty"></span></div></div>
+      <div class="card" id="p-chat" hidden>
+        <div class="empty" id="chathint"><svg><use href="#i-chat"/></svg><span data-i="chatempty"></span></div>
+        <div id="chatlog"></div>
+        <span class="note" id="chatst"></span>
+        <div class="crow"><input class="fld" id="chatin" data-ph="chatph" autocomplete="off"><button class="btn" id="chatsend" data-i="send"></button></div>
+        <button class="link" id="chatclr" data-i="clear"></button>
+      </div>
+
+      <div class="card" id="p-summary" hidden>
+        <button class="btn" id="sumbtn" data-i="sumbtn" style="align-self:flex-start;margin-top:0"></button>
+        <span class="note" id="sumst"></span>
+        <div class="empty" id="sumhint"><svg><use href="#i-doc"/></svg><span data-i="sumempty"></span></div>
+        <div class="out" id="sumout"></div>
+      </div>
+
       <div class="card" id="p-tr" hidden>
         <div class="tool"><span class="sp"></span><button id="am" aria-label="Smaller">A−</button><button id="ap" aria-label="Larger">A+</button></div>
         <div id="trbox"><div class="empty" id="trhint"><span data-i="trhint"></span></div></div>
@@ -177,8 +196,8 @@ button:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
 <script>
 const DEFMODEL="gemini-2.5-flash";
 const T={
-en:{meetings:"Meetings",ask:"Ask",sources:"Sources",stats:"Stats",settings:"Settings",powered:"Powered by EmbeddingGemma 2",mtitle:"EmbeddingGemma 2 Launch with Foresight",mdate:"Fri, Oct 2, 2026",notes:"Notes",chat:"Chat",summary:"Summary",tr:"Transcript",qa:"Live Q&A",short:"Shorthand notes",enh:"Live enhanced notes",live:"Live",ph:"Jot quick points here…",emptyenh:"Press the button to build enhanced notes from your shorthand notes and the transcript.",enhbtn:"Enhance notes",enhbusy:"Working…",enhnone:"Write shorthand notes or record something first.",chatempty:"Ask anything about this meeting.",sumempty:"The summary will appear after the meeting.",qaempty:"Questions raised in the meeting will be answered here from your sources.",trhint:"Press the red dot to start recording. The text will appear here.",askempty:"Ask about any meeting or source.",srcfiles:"PDF, Office, text and Markdown files",srcdocs:"Google Docs and web bookmarks",statm:"Meetings recorded",langl:"Language",themel:"Theme",auto:"Auto",light:"Light",dark:"Dark",keyl:"Gemini API key",keyph:"Paste key here",save:"Save",keynote:"Stored only on this phone. Never sent anywhere except Google.",modell:"Model name",modelnote:"Default: gemini-2.5-flash. Change it if Google reports the model is unavailable.",saved:"Saved.",nokey:"Add your Gemini API key in Settings first.",micerr:"Microphone error",empty:"No speech recognized in this part.",noapi:"Request failed"},
-ru:{meetings:"Встречи",ask:"Вопросы",sources:"Источники",stats:"Статистика",settings:"Настройки",powered:"На базе EmbeddingGemma 2",mtitle:"Запуск EmbeddingGemma 2 с Foresight",mdate:"Пт, 2 окт 2026",notes:"Заметки",chat:"Чат",summary:"Итоги",tr:"Расшифровка",qa:"Вопросы live",short:"Краткие заметки",enh:"Расширенные заметки",live:"Live",ph:"Записывайте короткие пункты…",emptyenh:"Нажмите кнопку, чтобы получить расширенные заметки из кратких заметок и расшифровки.",enhbtn:"Улучшить заметки",enhbusy:"Работаю…",enhnone:"Сначала напишите краткие заметки или сделайте запись.",chatempty:"Спросите что угодно об этой встрече.",sumempty:"Итоги появятся после встречи.",qaempty:"Вопросы со встречи получат ответы здесь из ваших источников.",trhint:"Нажмите красную точку, чтобы начать запись. Текст появится здесь.",askempty:"Спросите о любой встрече или источнике.",srcfiles:"Файлы PDF, Office, текст и Markdown",srcdocs:"Google Docs и закладки сайтов",statm:"Записано встреч",langl:"Язык",themel:"Тема",auto:"Авто",light:"Светлая",dark:"Тёмная",keyl:"Ключ Gemini API",keyph:"Вставьте ключ сюда",save:"Сохранить",keynote:"Хранится только на этом телефоне. Отправляется только в Google.",modell:"Название модели",modelnote:"По умолчанию: gemini-2.5-flash. Меняйте, если Google сообщит, что модель недоступна.",saved:"Сохранено.",nokey:"Сначала добавьте ключ Gemini в Настройках.",micerr:"Ошибка микрофона",empty:"В этом фрагменте речь не распознана.",noapi:"Запрос не выполнен"}
+en:{meetings:"Meetings",ask:"Ask",sources:"Sources",stats:"Stats",settings:"Settings",powered:"Powered by EmbeddingGemma 2",mtitle:"EmbeddingGemma 2 Launch with Foresight",mdate:"Fri, Oct 2, 2026",notes:"Notes",chat:"Chat",summary:"Summary",tr:"Transcript",qa:"Live Q&A",short:"Shorthand notes",enh:"Live enhanced notes",live:"Live",ph:"Jot quick points here…",emptyenh:"Press the button to build enhanced notes from your shorthand notes and the transcript.",enhbtn:"Enhance notes",enhbusy:"Working…",enhnone:"Write shorthand notes or record something first.",sumbtn:"Build summary",sumempty:"Press the button to build the meeting summary.",chatempty:"Ask a question about this meeting. Answers use your notes and transcript.",chatph:"Ask about the meeting…",send:"Send",clear:"Clear chat",clearq:"Clear the whole chat?",interrupted:"Recording was interrupted (for example by a call or by leaving Safari). Everything already transcribed is saved. Press the play button to continue.",qaempty:"Questions raised in the meeting will be answered here from your sources.",trhint:"Press the red dot to start recording. The text will appear here.",askempty:"Ask about any meeting or source.",srcfiles:"PDF, Office, text and Markdown files",srcdocs:"Google Docs and web bookmarks",statm:"Meetings recorded",langl:"Language",themel:"Theme",auto:"Auto",light:"Light",dark:"Dark",keyl:"Gemini API key",keyph:"Paste key here",save:"Save",keynote:"Stored only on this phone. Never sent anywhere except Google.",modell:"Model name",modelnote:"Default: gemini-2.5-flash. Change it if Google reports the model is unavailable.",saved:"Saved.",nokey:"Add your Gemini API key in Settings first.",micerr:"Microphone error",empty:"No speech recognized in this part.",noapi:"Request failed"},
+ru:{meetings:"Встречи",ask:"Вопросы",sources:"Источники",stats:"Статистика",settings:"Настройки",powered:"На базе EmbeddingGemma 2",mtitle:"Запуск EmbeddingGemma 2 с Foresight",mdate:"Пт, 2 окт 2026",notes:"Заметки",chat:"Чат",summary:"Итоги",tr:"Расшифровка",qa:"Вопросы live",short:"Краткие заметки",enh:"Расширенные заметки",live:"Live",ph:"Записывайте короткие пункты…",emptyenh:"Нажмите кнопку, чтобы получить расширенные заметки из кратких заметок и расшифровки.",enhbtn:"Улучшить заметки",enhbusy:"Работаю…",enhnone:"Сначала напишите краткие заметки или сделайте запись.",sumbtn:"Составить итоги",sumempty:"Нажмите кнопку, чтобы получить итоги встречи.",chatempty:"Спросите о встрече. Ответы строятся по вашим заметкам и расшифровке.",chatph:"Вопрос о встрече…",send:"Отправить",clear:"Очистить чат",clearq:"Очистить весь чат?",interrupted:"Запись прервалась (например, из-за звонка или выхода из Safari). Всё, что уже расшифровано, сохранено. Нажмите кнопку записи, чтобы продолжить.",qaempty:"Вопросы со встречи получат ответы здесь из ваших источников.",trhint:"Нажмите красную точку, чтобы начать запись. Текст появится здесь.",askempty:"Спросите о любой встрече или источнике.",srcfiles:"Файлы PDF, Office, текст и Markdown",srcdocs:"Google Docs и закладки сайтов",statm:"Записано встреч",langl:"Язык",themel:"Тема",auto:"Авто",light:"Светлая",dark:"Тёмная",keyl:"Ключ Gemini API",keyph:"Вставьте ключ сюда",save:"Сохранить",keynote:"Хранится только на этом телефоне. Отправляется только в Google.",modell:"Название модели",modelnote:"По умолчанию: gemini-2.5-flash. Меняйте, если Google сообщит, что модель недоступна.",saved:"Сохранено.",nokey:"Сначала добавьте ключ Gemini в Настройках.",micerr:"Ошибка микрофона",empty:"В этом фрагменте речь не распознана.",noapi:"Запрос не выполнен"}
 };
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
@@ -248,43 +267,116 @@ function addLine(kind,text){
 }
 trLog.forEach(drawLine);
 
-// Enhanced notes: shorthand notes + transcript are sent to Gemini on button press
-function showEnh(t){$("#enhout").textContent=t||"";$("#enhhint").style.display=t?"none":"flex"}
-function enhStatus(t,err){const s=$("#enhst");s.textContent=t||"";s.style.color=err?"var(--err)":""}
-showEnh(store.get("enh")||"");
-let enhBusy=false;
-async function enhance(){
-  if(enhBusy)return;
+// One place that talks to Gemini
+async function ask(contents,allowEmpty){
   const key=store.get("gkey")||"";
   const model=store.get("gmodel")||DEFMODEL;
-  if(!key){enhStatus(T[lang].nokey,true);return}
-  const notes=$("#note").value.trim();
-  const tr=trLog.filter(x=>x.kind==="text").map(x=>x.text).join("\n");
-  if(!notes&&!tr){enhStatus(T[lang].enhnone,true);return}
+  if(!key)throw new Error(T[lang].nokey);
+  const url="https://generativelanguage.googleapis.com/v1beta/models/"+encodeURIComponent(model)+":generateContent";
+  const r=await fetch(url,{
+    method:"POST",
+    headers:{"Content-Type":"application/json","x-goog-api-key":key},
+    body:JSON.stringify({contents})
+  });
+  const j=await r.json().catch(()=>({}));
+  if(!r.ok)throw new Error((j.error&&j.error.message)||(T[lang].noapi+" ("+r.status+")"));
+  const parts=(j.candidates&&j.candidates[0]&&j.candidates[0].content&&j.candidates[0].content.parts)||[];
+  const text=parts.map(p=>p.text||"").join("").trim();
+  if(!text&&!allowEmpty)throw new Error(T[lang].noapi);
+  return text;
+}
+function gather(){
+  return{notes:$("#note").value.trim(),tr:trLog.filter(x=>x.kind==="text").map(x=>x.text).join("\n"),enh:store.get("enh")||""};
+}
+function status(id,t,err){const s=$(id);s.textContent=t||"";s.style.color=err?"var(--err)":""}
+function showOut(out,hint,t){$(out).textContent=t||"";$(hint).style.display=t?"none":"flex"}
+async function withBtn(btn,st,idle,fn){
+  if(btn.disabled)return;
+  btn.disabled=true;btn.textContent=T[lang].enhbusy;st("");
+  try{await fn()}catch(e){st(String((e&&e.message)||e),true)}
+  finally{btn.disabled=false;btn.textContent=T[lang][idle]}
+}
+
+// Enhanced notes
+showOut("#enhout","#enhhint",store.get("enh")||"");
+$("#enhbtn").onclick=()=>withBtn($("#enhbtn"),(t,e)=>status("#enhst",t,e),"enhbtn",async()=>{
+  const g=gather();
+  if(!g.notes&&!g.tr)throw new Error(T[lang].enhnone);
   const instr=lang==="ru"
     ?"Ты помощник для заметок на встрече. Ниже краткие заметки пользователя и расшифровка записи. Составь расширенные заметки на русском языке: ключевые темы, принятые решения, задачи. СТРОГИЕ ПРАВИЛА: используй только то, что прямо сказано в тексте. Не придумывай решения: в «Принятые решения» включай только то, что явно названо решением или договорённостью. Не назначай ответственных: если человек лишь упомянут (например, «созвон с Иваном»), это не значит, что он отвечает за задачу. Указывай ответственного или срок только если они названы прямо, иначе не пиши о них. Если для раздела нет данных, пропусти раздел целиком. Пиши коротко. Простой текст без символов форматирования вроде ** и #; пункты начинай с «- ». Без вступлений и заключений."
     :"You are a meeting notes assistant. Below are the user's shorthand notes and a transcript of the recording. Write enhanced notes in English: key topics, decisions made, action items. STRICT RULES: use only what is stated in the text. Do not invent decisions: under decisions include only what is explicitly called a decision or agreement. Do not assign owners: if a person is merely mentioned (for example, \"call with Ivan\"), that does not make them responsible for a task. State an owner or deadline only if it is named directly, otherwise do not mention it. If a section has no data, skip that section entirely. Keep it concise. Plain text with no formatting symbols like ** or #; start list items with \"- \". No introduction or closing remarks.";
-  const prompt=instr+"\n\n=== SHORTHAND NOTES ===\n"+(notes||"(none)")+"\n\n=== TRANSCRIPT ===\n"+(tr||"(none)");
-  const btn=$("#enhbtn");
-  enhBusy=true;btn.disabled=true;btn.textContent=T[lang].enhbusy;enhStatus("");
-  try{
-    const url="https://generativelanguage.googleapis.com/v1beta/models/"+encodeURIComponent(model)+":generateContent";
-    const r=await fetch(url,{
-      method:"POST",
-      headers:{"Content-Type":"application/json","x-goog-api-key":key},
-      body:JSON.stringify({contents:[{parts:[{text:prompt}]}]})
-    });
-    const j=await r.json().catch(()=>({}));
-    if(!r.ok){enhStatus((j.error&&j.error.message)||(T[lang].noapi+" ("+r.status+")"),true);return}
-    const parts=(j.candidates&&j.candidates[0]&&j.candidates[0].content&&j.candidates[0].content.parts)||[];
-    const text=parts.map(p=>p.text||"").join("").trim();
-    if(!text){enhStatus(T[lang].noapi,true);return}
-    store.set("enh",text);
-    showEnh(text);
-  }catch(e){enhStatus(String((e&&e.message)||e),true)}
-  finally{enhBusy=false;btn.disabled=false;btn.textContent=T[lang].enhbtn}
+  const prompt=instr+"\n\n=== SHORTHAND NOTES ===\n"+(g.notes||"(none)")+"\n\n=== TRANSCRIPT ===\n"+(g.tr||"(none)");
+  const text=await ask([{parts:[{text:prompt}]}]);
+  store.set("enh",text);
+  showOut("#enhout","#enhhint",text);
+});
+
+// Summary
+showOut("#sumout","#sumhint",store.get("sum")||"");
+$("#sumbtn").onclick=()=>withBtn($("#sumbtn"),(t,e)=>status("#sumst",t,e),"sumbtn",async()=>{
+  const g=gather();
+  if(!g.notes&&!g.tr)throw new Error(T[lang].enhnone);
+  const instr=lang==="ru"
+    ?"Ты помощник для встреч. Составь итоги встречи на русском языке по кратким заметкам и расшифровке ниже. Структура: 1) Резюме (2-3 предложения); 2) Решения (только явно названные); 3) Задачи (ответственного и срок указывай только если они названы прямо). СТРОГО: используй только то, что сказано в тексте, ничего не выдумывай и не назначай ответственных по догадке. Разделы без данных пропускай. Простой текст без символов ** и #; пункты начинай с «- ». Без вступлений и заключений."
+    :"You are a meeting assistant. Write a meeting summary in English from the shorthand notes and transcript below. Structure: 1) Summary (2-3 sentences); 2) Decisions (only explicitly stated ones); 3) Action items (name an owner or deadline only if stated directly). STRICT: use only what is in the text, invent nothing, and do not assign owners by guessing. Skip sections with no data. Plain text with no ** or # symbols; start list items with \"- \". No introduction or closing remarks.";
+  const prompt=instr+"\n\n=== SHORTHAND NOTES ===\n"+(g.notes||"(none)")+"\n\n=== TRANSCRIPT ===\n"+(g.tr||"(none)");
+  const text=await ask([{parts:[{text:prompt}]}]);
+  store.set("sum",text);
+  showOut("#sumout","#sumhint",text);
+});
+
+// Chat about the meeting
+let chat=[],chatBusy=false;
+try{chat=JSON.parse(store.get("chat")||"[]")}catch(e){chat=[]}
+function drawMsg(m){
+  $("#chathint").style.display="none";
+  const d=document.createElement("div");
+  d.className="msg "+m.r;d.textContent=m.t;
+  $("#chatlog").appendChild(d);
+  d.scrollIntoView({block:"end"});
 }
-$("#enhbtn").onclick=enhance;
+chat.forEach(drawMsg);
+async function sendChat(){
+  if(chatBusy)return;
+  const q=$("#chatin").value.trim();
+  if(!q)return;
+  const g=gather();
+  if(!g.notes&&!g.tr&&!g.enh){status("#chatst",T[lang].enhnone,true);return}
+  status("#chatst","");
+  chatBusy=true;$("#chatsend").disabled=true;
+  chat.push({r:"u",t:q});drawMsg(chat[chat.length-1]);$("#chatin").value="";
+  try{
+    const instr=lang==="ru"
+      ?"Ты помощник по встрече. Отвечай на вопросы пользователя только по материалам встречи ниже (краткие заметки, расшифровка, расширенные заметки). Если ответа в материалах нет, так и скажи, ничего не выдумывай и не угадывай. Отвечай коротко, на русском языке, простым текстом без символов ** и #."
+      :"You are a meeting assistant. Answer the user's questions only from the meeting materials below (shorthand notes, transcript, enhanced notes). If the answer is not in the materials, say so; do not invent or guess. Answer briefly, in English, in plain text without ** or # symbols.";
+    const mat="\n\n=== SHORTHAND NOTES ===\n"+(g.notes||"(none)")+"\n\n=== TRANSCRIPT ===\n"+(g.tr||"(none)")+"\n\n=== ENHANCED NOTES ===\n"+(g.enh||"(none)");
+    const hist=chat.slice(-12);
+    while(hist.length&&hist[0].r!=="u")hist.shift();
+    const contents=[{role:"user",parts:[{text:instr+mat}]},{role:"model",parts:[{text:"OK"}]}];
+    hist.forEach(m=>contents.push({role:m.r==="u"?"user":"model",parts:[{text:m.t}]}));
+    const a=await ask(contents);
+    chat.push({r:"a",t:a});drawMsg(chat[chat.length-1]);
+    store.set("chat",JSON.stringify(chat.slice(-100)));
+  }catch(e){
+    chat.pop();
+    const last=$("#chatlog").lastElementChild;if(last)last.remove();
+    if(!chat.length)$("#chathint").style.display="flex";
+    $("#chatin").value=q;
+    status("#chatst",String((e&&e.message)||e),true);
+  }finally{chatBusy=false;$("#chatsend").disabled=false}
+}
+$("#chatsend").onclick=sendChat;
+$("#chatin").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();sendChat()}});
+$("#chatclr").onclick=()=>{
+  if(!chat.length||!confirm(T[lang].clearq))return;
+  chat=[];store.set("chat","[]");
+  $("#chatlog").innerHTML="";$("#chathint").style.display="flex";status("#chatst","");
+};
+
+// Keep the screen awake while recording
+let wl=null;
+async function lockOn(){try{if(navigator.wakeLock&&!wl){wl=await navigator.wakeLock.request("screen");wl.addEventListener("release",()=>{wl=null})}}catch(e){wl=null}}
+function lockOff(){try{if(wl)wl.release()}catch(e){}wl=null}
 
 // Recording: one short clip after another, each sent for transcription
 let stream=null,rec=null,running=false,segTimer=null,queue=Promise.resolve();
@@ -308,6 +400,7 @@ function newSeg(){
 }
 async function startRec(){
   stream=await navigator.mediaDevices.getUserMedia({audio:true});
+  stream.getAudioTracks().forEach(t=>{t.onended=()=>{if(running)interrupted()}});
   running=true;newSeg();
 }
 function stopRec(){
@@ -339,24 +432,12 @@ function toBase64(u8){
   return btoa(s);
 }
 async function transcribe(blob){
-  const key=store.get("gkey")||"";
-  const model=store.get("gmodel")||DEFMODEL;
-  if(!key){addLine("error",T[lang].nokey);return}
   try{
     const wav=await toWav(blob);
-    const url="https://generativelanguage.googleapis.com/v1beta/models/"+encodeURIComponent(model)+":generateContent";
-    const r=await fetch(url,{
-      method:"POST",
-      headers:{"Content-Type":"application/json","x-goog-api-key":key},
-      body:JSON.stringify({contents:[{parts:[
-        {text:"Transcribe this audio accurately. Return only the transcription text, no commentary."},
-        {inline_data:{mime_type:"audio/wav",data:toBase64(wav)}}
-      ]}]})
-    });
-    const j=await r.json().catch(()=>({}));
-    if(!r.ok){addLine("error",(j.error&&j.error.message)||(T[lang].noapi+" ("+r.status+")"));return}
-    const parts=(j.candidates&&j.candidates[0]&&j.candidates[0].content&&j.candidates[0].content.parts)||[];
-    const text=parts.map(p=>p.text||"").join("").trim();
+    const text=await ask([{parts:[
+      {text:"Transcribe this audio accurately. Return only the transcription text, no commentary."},
+      {inline_data:{mime_type:"audio/wav",data:toBase64(wav)}}
+    ]}],true);
     addLine(text?"text":"error",text||T[lang].empty);
   }catch(e){addLine("error",String((e&&e.message)||e))}
 }
@@ -366,19 +447,29 @@ const wave=$("#wave");for(let i=0;i<30;i++)wave.appendChild(document.createEleme
 let sec=0,tm=null,wv=null;
 function tick(){sec++;$("#time").textContent=String(Math.floor(sec/60)).padStart(2,"0")+":"+String(sec%60).padStart(2,"0")}
 function anim(){$$("#wave i").forEach(b=>b.style.height=(4+Math.random()*20)+"px")}
+function stopUi(){
+  stopRec();lockOff();
+  clearInterval(tm);clearInterval(wv);
+  $("#rec").classList.remove("on");$("#pp use").setAttribute("href","#i-play");
+  $$("#wave i").forEach(b=>b.style.height="4px");
+}
+function interrupted(){stopUi();addLine("error",T[lang].interrupted)}
 $("#pp").onclick=async()=>{
   if(!running){
     try{await startRec()}catch(e){addLine("error",T[lang].micerr+": "+(e.message||e));return}
+    lockOn();
     sec=0;$("#time").textContent="00:00";
     tm=setInterval(tick,1000);wv=setInterval(anim,140);
     $("#rec").classList.add("on");$("#pp use").setAttribute("href","#i-pause");
   }else{
-    stopRec();
-    clearInterval(tm);clearInterval(wv);
-    $("#rec").classList.remove("on");$("#pp use").setAttribute("href","#i-play");
-    $$("#wave i").forEach(b=>b.style.height="4px");
+    stopUi();
   }
 };
+document.addEventListener("visibilitychange",()=>{
+  if(document.visibilityState!=="visible"||!running)return;
+  const dead=!stream||stream.getTracks().some(t=>t.readyState!=="live");
+  if(dead)interrupted();else lockOn();
+});
 
 setTheme(store.get("theme")||"auto");
 setLang(store.get("lang")||((navigator.language||"").startsWith("ru")?"ru":"en"));
